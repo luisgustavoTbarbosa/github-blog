@@ -15,38 +15,55 @@ import {
   Users,
 } from '@phosphor-icons/react'
 
-import avatarImage from '../../assets/avatar.png'
 import { SearchForm } from './components/SearchForm'
 import { PostCard } from './components/PostCard'
+import { useEffect, useState } from 'react'
+import { githubUserApi } from '../../lib/axios'
+
+interface ProfileData {
+  avatar_url: string
+  name: string
+  bio: string
+  login: string
+  company: string
+  html_url: string
+}
 
 export function Home() {
+  const [profileData, setProfileData] = useState<ProfileData>({})
+
+  async function fetchProfileData() {
+    const response = await githubUserApi.get('')
+    setProfileData(response.data)
+  }
+
+  useEffect(() => {
+    fetchProfileData()
+  }, [])
+
   return (
     <div>
       <ProfileCard>
         <figure>
-          <img src={avatarImage} alt="" />
+          <img src={profileData.avatar_url} alt="" />
         </figure>
         <ProfileContent>
           <ProfileTitle>
-            <h1>Cameron Williamson</h1>
-            <a href="">
+            <h1>{profileData.name}</h1>
+            <a href={profileData.html_url}>
               GitHub
               <ArrowSquareOut size={16} color="#3294F8" weight="bold" />
             </a>
           </ProfileTitle>
-          <ProfileDescription>
-            Tristique volutpat pulvinar vel massa, pellentesque egestas. Eu
-            viverra massa quam dignissim aenean malesuada suscipit. Nunc,
-            volutpat pulvinar vel mass.
-          </ProfileDescription>
+          <ProfileDescription>{profileData.bio}</ProfileDescription>
           <ProfileTags>
             <span>
               <GithubLogo size={20} color="#3a536b" weight="fill" />
-              cameronwll
+              {profileData.login}
             </span>
             <span>
               <Buildings size={20} color="#3a536b" weight="fill" />
-              Rocketseat
+              {profileData.company}
             </span>
             <span>
               <Users size={20} color="#3a536b" weight="fill" />
