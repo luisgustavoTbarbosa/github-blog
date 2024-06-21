@@ -38,5 +38,6 @@ export const PostCardContainer = styled.div`
     -webkit-line-clamp: 4;
     overflow: hidden;
     line-height: 160%;
+    word-break: break-word;
   }
 `

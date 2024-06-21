@@ -18,7 +18,7 @@ import {
 import { SearchForm } from './components/SearchForm'
 import { PostCard } from './components/PostCard'
 import { useEffect, useState } from 'react'
-import { githubUserApi } from '../../lib/axios'
+import { githubSearchApi, githubUserApi } from '../../lib/axios'
 
 interface ProfileData {
   avatar_url: string
@@ -29,16 +29,46 @@ interface ProfileData {
   html_url: string
 }
 
+interface IssueData {
+  id: string
+  title: string
+  body: string
+  created_at: string
+}
+
 export function Home() {
-  const [profileData, setProfileData] = useState<ProfileData>({})
+  const [profileData, setProfileData] = useState<ProfileData>(() => ({
+    avatar_url: '',
+    name: '',
+    bio: '',
+    login: '',
+    company: '',
+    html_url: '',
+  }))
+
+  const [followers, setFollowers] = useState(0)
 
   async function fetchProfileData() {
-    const response = await githubUserApi.get('')
-    setProfileData(response.data)
+    const basicInformationResponse = await githubUserApi.get('')
+    const followersResponse = await githubUserApi.get('followers')
+
+    setProfileData(basicInformationResponse.data)
+    setFollowers(followersResponse.data.length)
+  }
+
+  const [issues, setIssues] = useState<Array<IssueData>>([])
+
+  async function featchSearchIssues() {
+    const issuesResponse = await githubSearchApi(
+      'issues?q=%20repo:luisgustavoTbarbosa/github-blog',
+    )
+
+    setIssues([...issuesResponse.data.items])
   }
 
   useEffect(() => {
     fetchProfileData()
+    featchSearchIssues()
   }, [])
 
   return (
@@ -67,7 +97,7 @@ export function Home() {
             </span>
             <span>
               <Users size={20} color="#3a536b" weight="fill" />
-              32 seguidores
+              {followers} seguidores
             </span>
           </ProfileTags>
         </ProfileContent>
@@ -79,9 +109,10 @@ export function Home() {
         </PostsHeader>
         <SearchForm />
         <PostsGrid>
-          <PostCard />
-          <PostCard />
-          <PostCard />
+          {issues &&
+            issues.map((issue) => {
+              return <PostCard key={issue.id} issue={issue} />
+            })}
         </PostsGrid>
       </PostsContainer>
     </div>
