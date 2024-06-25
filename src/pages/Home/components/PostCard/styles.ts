@@ -20,12 +20,16 @@ export const PostCardContainer = styled.div`
 
     h2 {
       flex: 1;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
       color: ${(props) => props.theme['off-white']};
       font-size: 1.25rem;
       line-height: 160%;
     }
 
-    span {
+    time {
       color: ${(props) => props.theme['gray-400']};
       font-size: 0.875rem;
       line-height: 2.2;

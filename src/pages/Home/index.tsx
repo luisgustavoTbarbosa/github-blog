@@ -58,9 +58,11 @@ export function Home() {
 
   const [issues, setIssues] = useState<Array<IssueData>>([])
 
-  async function featchSearchIssues() {
+  const issuesCount = issues.length
+
+  async function fetchSearchIssues(query = '') {
     const issuesResponse = await githubSearchApi(
-      'issues?q=%20repo:luisgustavoTbarbosa/github-blog',
+      `issues?q=${query}%20repo:luisgustavoTbarbosa/github-blog`,
     )
 
     setIssues([...issuesResponse.data.items])
@@ -68,7 +70,7 @@ export function Home() {
 
   useEffect(() => {
     fetchProfileData()
-    featchSearchIssues()
+    fetchSearchIssues()
   }, [])
 
   return (
@@ -105,9 +107,9 @@ export function Home() {
       <PostsContainer>
         <PostsHeader>
           <p>Publicações</p>
-          <span>6 publicações</span>
+          <span>{issuesCount} publicações</span>
         </PostsHeader>
-        <SearchForm />
+        <SearchForm handleFetchIssues={fetchSearchIssues} />
         <PostsGrid>
           {issues &&
             issues.map((issue) => {
