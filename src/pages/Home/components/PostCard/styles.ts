@@ -23,6 +23,7 @@ export const PostCardContainer = styled.div`
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      height: 4rem;
       overflow: hidden;
       color: ${(props) => props.theme['off-white']};
       font-size: 1.25rem;
@@ -41,6 +42,8 @@ export const PostCardContainer = styled.div`
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
     overflow: hidden;
+    height: 6.399rem;
+    color: ${(props) => props.theme['gray-300']};
     line-height: 160%;
     word-break: break-word;
   }

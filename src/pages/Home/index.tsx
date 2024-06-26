@@ -19,6 +19,7 @@ import { SearchForm } from './components/SearchForm'
 import { PostCard } from './components/PostCard'
 import { useEffect, useState } from 'react'
 import { githubSearchApi, githubUserApi } from '../../lib/axios'
+import { Link } from 'react-router-dom'
 
 interface ProfileData {
   avatar_url: string
@@ -30,7 +31,8 @@ interface ProfileData {
 }
 
 interface IssueData {
-  id: string
+  id: number
+  number: number
   title: string
   body: string
   created_at: string
@@ -113,7 +115,11 @@ export function Home() {
         <PostsGrid>
           {issues &&
             issues.map((issue) => {
-              return <PostCard key={issue.id} issue={issue} />
+              return (
+                <Link to={`/post/${issue.number}`} key={issue.id}>
+                  <PostCard issue={issue} />
+                </Link>
+              )
             })}
         </PostsGrid>
       </PostsContainer>

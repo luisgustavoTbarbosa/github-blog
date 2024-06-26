@@ -95,4 +95,8 @@ export const PostsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
+
+  a {
+    text-decoration: none;
+  }
 `
