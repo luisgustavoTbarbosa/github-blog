@@ -21,4 +21,23 @@ export const GlobalStyles = createGlobalStyle`
   body, input, textarea, button {
     font: 400 1rem Nunito, sans-serif;
   }
+
+  .redirect-link {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+    color: ${(props) => props.theme.blue};
+    font-size: 0.75rem;
+    font-weight: bold;
+    line-height: 1.2;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    &:hover {
+      transition: border-color 0.2s ease;
+      border-color: ${(props) => props.theme.blue};
+    }
+  }
 `

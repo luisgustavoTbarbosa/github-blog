@@ -84,7 +84,7 @@ export function Home() {
         <ProfileContent>
           <ProfileTitle>
             <h1>{profileData.name}</h1>
-            <a href={profileData.html_url}>
+            <a className="redirect-link" href={profileData.html_url}>
               GitHub
               <ArrowSquareOut size={16} color="#3294F8" weight="bold" />
             </a>
