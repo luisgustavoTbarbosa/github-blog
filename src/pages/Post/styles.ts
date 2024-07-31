@@ -30,3 +30,6 @@ export const PostTags = styled.div`
     color: ${(props) => props.theme['gray-100']};
   }
 `
+export const ContentContainer = styled.main`
+  padding: 2.5rem 2rem;
+`

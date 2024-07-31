@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
-import { PostHeader, PostTags, RedirectsContainer } from './styles'
+import { useEffect, useState } from 'react'
+import { githubIssueDataApi } from '../../lib/axios'
 import {
   ArrowSquareOut,
   CalendarDots,
@@ -7,10 +8,41 @@ import {
   ChatCircle,
   GithubLogo,
 } from '@phosphor-icons/react'
+import {
+  ContentContainer,
+  PostHeader,
+  PostTags,
+  RedirectsContainer,
+} from './styles'
+
+import { createRoot } from 'react-dom/client'
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export function Post() {
   const { id } = useParams()
   console.log('id', id)
+
+  const [issue, setIssue] = useState({})
+
+  async function fetchIssueDataApi(issueId) {
+    const issueResponse = await githubIssueDataApi(issueId)
+
+    setIssue({ ...issueResponse.data })
+    console.log('issueResponse', issueResponse.data)
+  }
+
+  useEffect(() => {
+    fetchIssueDataApi(id)
+  }, [id])
+
+  const mainTag = document.querySelector('main')
+
+  if (mainTag) {
+    createRoot(mainTag).render(
+      <Markdown remarkPlugins={[remarkGfm]}>{issue.body}</Markdown>,
+    )
+  }
 
   return (
     <>
@@ -40,7 +72,7 @@ export function Post() {
           </span>
         </PostTags>
       </PostHeader>
-      <div>conteúdo</div>
+      <ContentContainer>{issue.body}</ContentContainer>
     </>
   )
 }

@@ -10,5 +10,5 @@ export const githubSearchApi = axios.create({
 
 export const githubIssueDataApi = axios.create({
   baseURL:
-    'https://api.github.com/repos/luisgustavoTbarbosa/github-blog/issues/4',
+    'https://api.github.com/repos/luisgustavoTbarbosa/github-blog/issues/',
 })
