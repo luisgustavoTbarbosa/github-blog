@@ -7,6 +7,7 @@ export const ProfileCard = styled.div`
   padding: 2rem;
   border-radius: 10px;
   background: ${(props) => props.theme['dark-blue']};
+  box-shadow: 0 2px 28px 0 rgba(0, 0, 0, 0.2);
 
   figure {
     display: flex;
