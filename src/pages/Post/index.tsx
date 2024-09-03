@@ -21,13 +21,16 @@ import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
+interface IssueType {
+  body: string | undefined
+  title: string | undefined
+}
+
 export function Post() {
   const { id } = useParams()
-  console.log('id', id)
+  const [issue, setIssue] = useState({} as IssueType)
 
-  const [issue, setIssue] = useState({})
-
-  async function fetchIssueDataApi(issueId) {
+  async function fetchIssueDataApi(issueId: string) {
     const issueResponse = await githubIssueDataApi(issueId)
 
     setIssue({ ...issueResponse.data })
@@ -35,7 +38,9 @@ export function Post() {
   }
 
   useEffect(() => {
-    fetchIssueDataApi(id)
+    if (id) {
+      fetchIssueDataApi(id)
+    }
   }, [id])
 
   const mainTag = document.querySelector('main')
@@ -43,20 +48,15 @@ export function Post() {
   if (mainTag) {
     createRoot(mainTag).render(
       <Markdown
-        children={issue.body}
         remarkPlugins={[remarkGfm]}
         components={{
           code(props) {
-            const { children, className, node, ...rest } = props
+            const { children, className, ...rest } = props
             const match = /language-(\w+)/.exec(className || '')
             return match ? (
-              <SyntaxHighlighter
-                {...rest}
-                PreTag="div"
-                children={String(children).replace(/\n$/, '')}
-                language={match[1]}
-                style={dracula}
-              />
+              <SyntaxHighlighter language={match[1]} style={dracula}>
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
             ) : (
               <code {...rest} className={className}>
                 {children}
@@ -64,7 +64,9 @@ export function Post() {
             )
           },
         }}
-      />,
+      >
+        {issue.body}
+      </Markdown>,
     )
   }
 
@@ -81,7 +83,7 @@ export function Post() {
             <ArrowSquareOut size={16} color="#3294F8" weight="bold" />
           </a>
         </RedirectsContainer>
-        <h1>JavaScript data types and data structures</h1>
+        <h1>{issue.title}</h1>
         <PostTags>
           <span>
             <GithubLogo size={20} color="#3a536b" weight="fill" />
