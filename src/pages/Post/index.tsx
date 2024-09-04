@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { githubIssueDataApi } from '../../lib/axios'
 import {
   ArrowSquareOut,
@@ -15,26 +15,32 @@ import {
   RedirectsContainer,
 } from './styles'
 
-import { createRoot } from 'react-dom/client'
+import { createRoot, Root } from 'react-dom/client'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dracula } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 interface IssueType {
   body: string | undefined
   title: string | undefined
+  user: {
+    login: string | undefined
+  }
+  created_at: string
 }
 
 export function Post() {
   const { id } = useParams()
   const [issue, setIssue] = useState({} as IssueType)
+  const rootRef = useRef<Root | null>(null)
 
   async function fetchIssueDataApi(issueId: string) {
     const issueResponse = await githubIssueDataApi(issueId)
 
     setIssue({ ...issueResponse.data })
-    console.log('issueResponse', issueResponse.data)
   }
 
   useEffect(() => {
@@ -43,31 +49,49 @@ export function Post() {
     }
   }, [id])
 
-  const mainTag = document.querySelector('main')
+  useEffect(() => {
+    const mainTag = document.querySelector('main')
+    if (mainTag) {
+      if (!rootRef.current) {
+        rootRef.current = createRoot(mainTag)
+      }
 
-  if (mainTag) {
-    createRoot(mainTag).render(
-      <Markdown
-        remarkPlugins={[remarkGfm]}
-        components={{
-          code(props) {
-            const { children, className, ...rest } = props
-            const match = /language-(\w+)/.exec(className || '')
-            return match ? (
-              <SyntaxHighlighter language={match[1]} style={dracula}>
-                {String(children).replace(/\n$/, '')}
-              </SyntaxHighlighter>
-            ) : (
-              <code {...rest} className={className}>
-                {children}
-              </code>
-            )
-          },
-        }}
-      >
-        {issue.body}
-      </Markdown>,
-    )
+      rootRef.current.render(
+        <Markdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            code(props) {
+              const { children, className, ...rest } = props
+              const match = /language-(\w+)/.exec(className || '')
+              return match ? (
+                <SyntaxHighlighter language={match[1]} style={dracula}>
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+              ) : (
+                <code {...rest} className={className}>
+                  {children}
+                </code>
+              )
+            },
+          }}
+        >
+          {issue.body}
+        </Markdown>,
+      )
+    }
+  }, [issue.body])
+
+  function formattedDate(date: string) {
+    if (!date) {
+      return ''
+    }
+
+    const createdDateRelativeToNow = formatDistanceToNow(date, {
+      locale: ptBR,
+      addSuffix: true,
+    })
+
+    return createdDateRelativeToNow
   }
 
   return (
@@ -87,18 +111,18 @@ export function Post() {
         <PostTags>
           <span>
             <GithubLogo size={20} color="#3a536b" weight="fill" />
-            cameronwll
+            {issue.user && issue.user.login}
           </span>
           <span>
             <CalendarDots size={20} color="#3a536b" weight="fill" />
-            Há 1 dia
+            {formattedDate(issue.created_at)}
           </span>
           <span>
             <ChatCircle size={20} color="#3a536b" weight="fill" /> 5 comentários
           </span>
         </PostTags>
       </PostHeader>
-      <ContentContainer>{issue.body}</ContentContainer>
+      <ContentContainer />
     </>
   )
 }
