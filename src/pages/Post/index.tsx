@@ -30,6 +30,8 @@ interface IssueType {
     login: string | undefined
   }
   created_at: string
+  comments: number
+  html_url: string
 }
 
 export function Post() {
@@ -102,7 +104,7 @@ export function Post() {
             <CaretLeft size={16} color="#3294F8" weight="bold" />
             Voltar
           </Link>
-          <a href="#" className="redirect-link">
+          <a href={issue.html_url} className="redirect-link">
             Ver no github
             <ArrowSquareOut size={16} color="#3294F8" weight="bold" />
           </a>
@@ -118,7 +120,8 @@ export function Post() {
             {formattedDate(issue.created_at)}
           </span>
           <span>
-            <ChatCircle size={20} color="#3a536b" weight="fill" /> 5 comentários
+            <ChatCircle size={20} color="#3a536b" weight="fill" />
+            {issue.comments} comentários
           </span>
         </PostTags>
       </PostHeader>
